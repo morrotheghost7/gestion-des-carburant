@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gestion des carburants</title>
+<style>
+:root{--bg:#f3efe8;--card:#fff;--tx:#17140f;--mut:#6f6a60;--bd:#e6e0d4;--bd2:#d6cfc0;--th:#f7f3ea;--hv:#fff4ec;--pri:#ff5a1f;--pri-d:#e04410;--pri-l:rgba(255,90,31,.14);--onp:#fff;--lk:#c2410c;--b1:rgba(255,90,31,.16);--r:16px;--sh:0 1px 2px rgba(23,20,15,.05),0 10px 28px rgba(23,20,15,.07);--glow:0 8px 22px rgba(255,90,31,.35)}
+[data-theme=dark]{--bg:#0a0c11;--card:#141821;--tx:#eef1f7;--mut:#8b94a7;--bd:#232938;--bd2:#2f3648;--th:#10141c;--hv:#1a2030;--pri:#c8f542;--pri-d:#9fcf1f;--pri-l:rgba(200,245,66,.14);--onp:#0a0c11;--lk:#c8f542;--b1:rgba(200,245,66,.10);--sh:0 1px 2px rgba(0,0,0,.45),0 12px 32px rgba(0,0,0,.4);--glow:0 8px 26px rgba(200,245,66,.28);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.55 system-ui,"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--tx);font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(640px 420px at 92% -8%,var(--b1),transparent),radial-gradient(520px 420px at -8% 108%,rgba(124,58,237,.13),transparent)}
+a{color:var(--lk);text-decoration:none}a:hover{text-decoration:underline}
+.top{background:linear-gradient(110deg,#0b0d12 0%,#161a25 62%,#25190f 100%);color:#fff;display:flex;align-items:center;gap:20px;padding:12px 28px;flex-wrap:wrap;box-shadow:inset 0 -3px 0 var(--pri)}
+.top a{color:#cdd6ec}.top a:hover{color:#fff}
+.logo{background:var(--pri);color:var(--onp);font-weight:900;letter-spacing:1.5px;padding:7px 14px;border-radius:10px;transform:skew(-8deg);box-shadow:var(--glow)}
+.org{flex:1;min-width:0}.org b{display:block;font-weight:750;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.org span{font-size:12px;color:var(--pri);letter-spacing:.6px;text-transform:uppercase;font-weight:600}
+.ui{display:flex;gap:14px;align-items:center}
+.cnt{background:var(--pri);color:var(--onp);border-radius:999px;padding:0 8px;font-size:11.5px;font-weight:800;min-width:20px;text-align:center}
+.nt{display:flex;gap:8px;align-items:center;padding:7px 14px;border:1px solid rgba(255,255,255,.18);border-radius:999px;font-size:13px;transition:background .15s}.nt:hover{background:rgba(255,255,255,.1);text-decoration:none}
+.um{position:relative}.ub{display:flex;gap:10px;align-items:center;color:#fff!important}.ub:hover{text-decoration:none}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pri),#8b5cf6);color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px}
+.un{display:flex;flex-direction:column;line-height:1.25}.un b{font-size:13px;font-weight:700}.un i{font-style:normal;font-size:11.5px;color:#9aa6c4}
+.dd{display:none;position:absolute;inset-inline-end:0;top:calc(100% + 10px);min-width:220px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.28);padding:6px;z-index:20}
+.um.open .dd{display:block}.top .dd a{display:block;padding:9px 12px;border-radius:8px;color:var(--tx)}.top .dd a:hover{background:var(--hv);color:var(--tx);text-decoration:none}
+.bc{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 28px 0;font-size:12.5px;color:var(--mut)}
+.tools{display:flex;gap:10px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--bd2);border-radius:999px;overflow:hidden;background:var(--card)}
+.seg a{padding:4px 14px;color:var(--tx);font-size:12.5px;font-weight:500}.seg a:hover{background:var(--hv);text-decoration:none}.seg a.on{background:var(--pri);color:var(--onp);font-weight:700}
+.tbtn{padding:4px 14px;border:1px solid var(--bd2);border-radius:999px;background:var(--card);color:var(--tx);font-size:12.5px}.tbtn:hover{background:var(--hv);text-decoration:none}
+.wrap{display:flex;min-height:calc(100vh - 150px);gap:0}
+nav{width:250px;flex:none;background:#0b0d12;margin:16px 0 16px 16px;margin-inline:16px 0;border-radius:20px;padding:14px 12px;align-self:flex-start;box-shadow:var(--sh)}
+nav h4{margin:18px 12px 6px;font-size:11px;font-weight:700;color:#6c7794;letter-spacing:1.4px;text-transform:uppercase}
+nav a{display:flex;gap:11px;align-items:center;padding:10px 12px;margin-bottom:3px;color:#aab3ca;border-radius:12px;transition:background .15s,color .15s,transform .15s}
+nav a:hover{background:rgba(255,255,255,.07);color:#fff;text-decoration:none;transform:translateX(2px)}
+nav a.on{background:linear-gradient(90deg,var(--pri-l),transparent);color:#fff;font-weight:700;box-shadow:inset 3px 0 0 var(--pri)}
+nav a.on svg{stroke:var(--pri)}nav svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;flex:none}
+nav .cnt{margin-inline-start:auto}
+main{flex:1;padding:22px 28px 40px;min-width:0}
+main>*{animation:up .4s ease both}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+h1{font-size:30px;font-weight:800;letter-spacing:-.8px;margin:0 0 22px;line-height:1.15}
+h1::after{content:"";display:block;width:54px;height:5px;border-radius:9px;background:var(--pri);margin-top:10px}
+h2{font-size:16px;font-weight:750;margin:28px 0 12px}
+.ft{padding:14px 28px;font-size:12.5px;color:var(--mut);display:flex;justify-content:space-between}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+th{background:var(--th);color:var(--mut);text-align:start;font-weight:700;font-size:11.5px;letter-spacing:.8px;text-transform:uppercase}
+th,td{padding:11px 16px;border-bottom:1px solid var(--bd)}tr:last-child td{border-bottom:0}
+td{transition:background .12s}tr:hover td{background:var(--hv)}
+.n{text-align:end}td.act a{margin-inline-end:14px;font-weight:600}
+div[id^=tb-]{overflow-x:auto;padding:2px}
+.st{display:inline-block;padding:2px 11px;border:1px solid;border-radius:999px;font-size:12px;font-weight:600}
+.st.A{color:#16a34a;background:rgba(22,163,74,.12);border-color:rgba(22,163,74,.35)}.st.P{color:#d97706;background:rgba(217,119,6,.12);border-color:rgba(217,119,6,.38)}.st.R{color:#e11d48;background:rgba(225,29,72,.1);border-color:rgba(225,29,72,.35)}.st.g{color:var(--mut);background:rgba(128,128,128,.12);border-color:var(--bd2)}
+[data-theme=dark] .st.A{color:#4ade80}[data-theme=dark] .st.P{color:#fbbf24}[data-theme=dark] .st.R{color:#fb7185}
+fieldset{border:1px solid var(--bd);background:var(--card);border-radius:var(--r);box-shadow:var(--sh);margin:0 0 18px;padding:16px 20px 8px}
+legend{font-weight:750;padding:0 10px;color:var(--tx);background:var(--pri-l);border-radius:999px}
+.f{margin-bottom:15px;max-width:480px}.f label{display:block;margin-bottom:6px;font-weight:600;font-size:13px}
+input,select,textarea{width:100%;padding:10px 13px;border:1px solid var(--bd2);border-radius:12px;font:inherit;background:var(--card);color:var(--tx);transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--pri);box-shadow:0 0 0 4px var(--pri-l)}
+.err{display:block;color:#e11d48;font-size:12.5px;margin-top:5px;font-weight:500}.rq{color:#e11d48}
+.note{color:var(--mut);font-size:12.5px;margin:0 0 14px}
+.btn{background:linear-gradient(135deg,var(--pri),var(--pri-d));color:var(--onp);border:0;padding:10px 24px;border-radius:999px;font:inherit;font-weight:750;cursor:pointer;width:auto;display:inline-block;box-shadow:var(--glow);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);text-decoration:none}.btn.sec{background:var(--card);color:var(--tx);border:1px solid var(--bd2);box-shadow:none}.btn.sec:hover{background:var(--hv)}
+.bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center}.bar input,.bar select{width:auto;min-width:200px;border-radius:999px}
+.pg{display:flex;gap:14px;margin-top:12px;font-size:13px;align-items:center;color:var(--mut)}
+.flash{border:1px solid rgba(22,163,74,.4);color:#16a34a;background:rgba(22,163,74,.12);padding:11px 16px;margin-bottom:18px;border-radius:12px;font-weight:600}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:24px}
+.kp div{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:20px 20px 16px;--k:var(--pri);transition:transform .18s}
+.kp div:hover{transform:translateY(-3px)}.kp div:nth-child(2){--k:#06b6d4}.kp div:nth-child(3){--k:#f59e0b}.kp div:nth-child(4){--k:#8b5cf6}
+.kp div::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--k)}
+.kp span{display:block;font-size:12px;color:var(--mut);font-weight:600;letter-spacing:.3px}.kp b{font-size:32px;font-weight:800;letter-spacing:-1px}
+.kv th{width:210px}
+.bd{height:9px;background:var(--th);border-radius:999px;min-width:90px;overflow:hidden;display:inline-block;width:90px;vertical-align:middle;border:1px solid var(--bd)}.bd i{display:block;height:100%;background:var(--pri);border-radius:999px}
+svg[role=img]{background:var(--card)!important;border:1px solid var(--bd)!important;border-radius:var(--r)!important;box-shadow:var(--sh);padding:6px}
+svg[role=img] rect{fill:var(--pri)}svg[role=img] text{fill:var(--tx)}svg[role=img] line{stroke:var(--bd2)}
+.lgt{max-width:500px;margin:28px auto 0;display:flex;justify-content:flex-end;gap:10px}
+.lgn{max-width:500px;margin:14px auto 40px;background:var(--card);border:1px solid var(--bd);border-radius:24px;padding:32px;box-shadow:0 30px 70px rgba(0,0,0,.35)}
+.lgn h1{font-size:34px}.lgn table{box-shadow:none}.lgn fieldset{box-shadow:none;border:0;padding:0}.lgn legend{display:none}.lgn .f{max-width:none}.lgn .btn{width:100%;padding:13px}
+body:has(.lgn){background:#07080c}
+body:has(.lgn)::before{background:radial-gradient(720px 520px at 15% 5%,var(--b1),transparent),radial-gradient(640px 520px at 92% 95%,rgba(124,58,237,.28),transparent)}
+body:has(.lgn) .top{background:transparent;box-shadow:none}
+.bon{color:var(--tx);background:#fff;border:1px solid #17140f;border-radius:4px;padding:26px;max-width:780px}
+[data-theme=dark] .bon{--card:#fff;--tx:#17140f;--bd:#e6e0d4;--th:#f7f3ea;--hv:#fff;--mut:#6f6a60}
+.bon .bh{display:flex;justify-content:space-between;border-bottom:2px solid #17140f;padding-bottom:8px;margin-bottom:12px}
+.bon table{box-shadow:none;border-radius:0}.bon h1::after{display:none}
+.sig{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:24px}.sig div{border:1px solid #17140f;height:90px;padding:6px}
+.stamp{border:1px dashed #17140f;height:90px;width:200px;margin-top:14px;margin-inline-start:auto;padding:6px}
+@media(max-width:900px){.wrap{display:block}nav{width:auto;display:flex;gap:4px;overflow-x:auto;margin:12px;border-radius:16px;padding:8px}nav h4{display:none}nav a{white-space:nowrap;margin:0}nav a:hover{transform:none}main{padding:16px}.top{padding:12px 16px}.bc{padding:12px 16px 0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{[data-theme=dark]{--bg:#fff}body::before{display:none}.top,.bc,nav,.ft,.noprint{display:none!important}.wrap{display:block}body{background:#fff}main{padding:0}main>*{animation:none}.bon{border:0;max-width:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const LS=(()=>{const m={};try{window.localStorage.setItem("_t","1");window.localStorage.removeItem("_t");return window.localStorage}catch(e){return{getItem:k=>k in m?m[k]:null,setItem:(k,v)=>{m[k]=String(v)},removeItem:k=>{delete m[k]}}}})();
+const ORG={fr:"Société Nationale des Infrastructures Publiques",ar:"الشركة الوطنية للبنيات التحتية العمومية",en:"National Public Infrastructure Company"};
+const T={fr:{app:"Gestion des carburants",login:"Connexion",ident:"Identifiant",pass:"Mot de passe",demo:"Comptes de démonstration",bad:"Identifiant ou mot de passe incorrect.",off:"Compte désactivé.",logout:"Déconnexion",pwd:"Changer le mot de passe",notifs:"Notifications",denied:"Accès refusé",g1:"Demandes",g2:"Gestion",g3:"Administration",home:"Accueil",dashboard:"Tableau de bord",mine:"Mes demandes",new:"Nouvelle demande",all:"Toutes les demandes",vehicles:"Véhicules",fuel:"Alimentations",users:"Utilisateurs",budget:"Budget et paramètres",log:"Journal d’activité",reqd:"Demande",ADMIN:"Administrateur",MANAGER:"Responsable",EMPLOYEE:"Employé",P:"En attente",A:"Approuvée",R:"Rejetée",date:"Date",veh:"Véhicule",ftype:"Carburant",liters:"Litres",reason:"Motif",no:"N° bon",status:"Statut",emp:"Employé",month:"Mois",rej:"Motif du rejet",plate:"Immatriculation",model:"Modèle",l100:"Normal (L/100 km)",quota:"Quota mensuel (L)",price:"Prix unitaire (DH/L)",station:"Station",odo:"Kilométrage (km)",name:"Nom complet",role:"Rôle",dept:"Département",amount:"Montant",act:"Actions",bud:"Budget annuel",cons:"Consommé",pct:"Taux",who:"Utilisateur",what:"Action",save:"Enregistrer",cancel:"Annuler",add:"Nouveau",view:"Consulter",edit:"Modifier",del:"Supprimer",ok:"Approuver",ko:"Rejeter",print:"Imprimer",search:"Rechercher",req_note:"Les champs marqués * sont obligatoires",required:"Champ obligatoire",all2:"Tous",prev:"Précédent",next:"Suivant",none:"Aucun résultat",csv:"Exporter CSV",reset:"Réinitialiser les données de démonstration",saved:"Enregistrement effectué.",disable:"Désactiver",enable:"Activer",kl:"Litres du mois",kc:"Coût du mois",kp:"Demandes en attente",ka:"Consommation moyenne (L/100 km)",anom:"Anomalies de consommation (15 % ou plus au-dessus de la normale)",over:"Véhicules au-delà du quota mensuel",chart:"Consommation mensuelle (litres)",normal:"Normale",meas:"Mesurée",gap:"Écart",bon:"Bon de carburant",rq_:"Demandeur",mg:"Responsable",dr:"Direction",stamp:"Cachet",appr:"Approuvé par",n_new:"Nouvelle demande {no} de {u}",n_ok:"Demande {no} approuvée",n_ko:"Demande {no} rejetée",a_login:"Connexion",a_req:"Création de demande",a_ok:"Approbation de demande",a_ko:"Rejet de demande",a_fuel:"Enregistrement d’alimentation",a_veh:"Modification de véhicule",a_user:"Modification d’utilisateur",a_set:"Modification des paramètres",a_pwd:"Changement de mot de passe",a_reset:"Réinitialisation des données",e_num:"Valeur numérique positive requise",e_plate:"Format attendu : 12345-A-6",e_pw6:"6 caractères minimum",e_mis:"Les mots de passe ne correspondent pas",e_cur:"Mot de passe actuel incorrect",e_dup:"Cette valeur existe déjà",e_odo:"Le kilométrage doit dépasser la lecture précédente",e_max:"Maximum 200 litres",s_req:"Informations de la demande",s_veh:"Informations du véhicule",s_fuel:"Informations de l’alimentation",s_user:"Informations de l’utilisateur",s_pwd:"Mot de passe",s_pr:"Prix des carburants (DH/L)",s_bu:"Budget annuel par département (DH)",s_dec:"Décision de rejet",creq:"Demande approuvée",fuelrec:"Enregistrer une alimentation",nofuel:"Aucune demande approuvée en attente d’alimentation.",cur:"Mot de passe actuel",nw:"Nouveau mot de passe",cf:"Confirmation",pwhint:"Mot de passe (laisser vide pour conserver)",ver:"Version 1.0",reports:"Rapports",usage:"Utilisation du quota",backup:"Sauvegarde des données",exp:"Exporter la sauvegarde (JSON)",imp:"Importer une sauvegarde",imp_ok:"Sauvegarde importée.",imp_ko:"Fichier invalide.",a_import:"Import de sauvegarde",bydept:"Par département",byveh:"Par véhicule",todo:"Demandes à traiter",use:"Utiliser",n_late:"Demande {no} en attente depuis {d} jours",late:"En retard",dark:"Mode sombre",light:"Mode clair",hist:"Historique",chartc:"Coût mensuel (DH)",tl:"Litres cumulés",tc:"Coût cumulé",lo:"Dernier kilométrage",unread:"Non lue",flag:"Anomalie",ok2:"Conforme",total:"Total"},
+ar:{app:"تدبير المحروقات",login:"تسجيل الدخول",ident:"اسم المستخدم",pass:"كلمة المرور",demo:"حسابات تجريبية",bad:"اسم المستخدم أو كلمة المرور غير صحيحة.",off:"هذا الحساب معطل.",logout:"تسجيل الخروج",pwd:"تغيير كلمة المرور",notifs:"الإشعارات",denied:"الوصول مرفوض",g1:"الطلبات",g2:"التدبير",g3:"الإدارة",home:"الرئيسية",dashboard:"لوحة القيادة",mine:"طلباتي",new:"طلب جديد",all:"جميع الطلبات",vehicles:"المركبات",fuel:"التزويد بالوقود",users:"المستخدمون",budget:"الميزانية والإعدادات",log:"سجل الأنشطة",reqd:"الطلب",ADMIN:"مدير النظام",MANAGER:"مسؤول",EMPLOYEE:"موظف",P:"قيد الانتظار",A:"موافق عليه",R:"مرفوض",date:"التاريخ",veh:"المركبة",ftype:"نوع الوقود",liters:"اللترات",reason:"السبب",no:"رقم السند",status:"الحالة",emp:"الموظف",month:"الشهر",rej:"سبب الرفض",plate:"رقم التسجيل",model:"الطراز",l100:"العادي (ل/100 كلم)",quota:"الحصة الشهرية (ل)",price:"الثمن الوحدوي (د.م/ل)",station:"المحطة",odo:"العداد (كلم)",name:"الاسم الكامل",role:"الدور",dept:"القسم",amount:"المبلغ",act:"إجراءات",bud:"الميزانية السنوية",cons:"المستهلك",pct:"النسبة",who:"المستخدم",what:"الإجراء",save:"حفظ",cancel:"إلغاء",add:"جديد",view:"عرض",edit:"تعديل",del:"حذف",ok:"الموافقة",ko:"رفض",print:"طباعة",search:"بحث",req_note:"الحقول المميزة بـ * إجبارية",required:"حقل إجباري",all2:"الكل",prev:"السابق",next:"التالي",none:"لا توجد نتائج",csv:"تصدير CSV",reset:"إعادة تعيين بيانات العرض",saved:"تم الحفظ بنجاح.",disable:"تعطيل",enable:"تفعيل",kl:"لترات الشهر",kc:"تكلفة الشهر",kp:"طلبات قيد الانتظار",ka:"متوسط الاستهلاك (ل/100 كلم)",anom:"شذوذات الاستهلاك (15 % فأكثر فوق العادي)",over:"مركبات تجاوزت الحصة الشهرية",chart:"الاستهلاك الشهري (باللتر)",normal:"العادي",meas:"المقاس",gap:"الفارق",bon:"سند الوقود",rq_:"الطالب",mg:"المسؤول",dr:"المديرية",stamp:"الطابع والختم",appr:"وافق عليه",n_new:"طلب جديد {no} من {u}",n_ok:"تمت الموافقة على الطلب {no}",n_ko:"تم رفض الطلب {no}",a_login:"تسجيل الدخول",a_req:"إنشاء طلب",a_ok:"الموافقة على طلب",a_ko:"رفض طلب",a_fuel:"تسجيل تزويد",a_veh:"تعديل مركبة",a_user:"تعديل مستخدم",a_set:"تعديل الإعدادات",a_pwd:"تغيير كلمة المرور",a_reset:"إعادة تعيين البيانات",e_num:"قيمة رقمية موجبة مطلوبة",e_plate:"الصيغة المنتظرة: 12345-A-6",e_pw6:"6 أحرف على الأقل",e_mis:"كلمتا المرور غير متطابقتين",e_cur:"كلمة المرور الحالية غير صحيحة",e_dup:"هذه القيمة موجودة مسبقا",e_odo:"يجب أن يفوق العداد القراءة السابقة",e_max:"الحد الأقصى 200 لتر",s_req:"معلومات الطلب",s_veh:"معلومات المركبة",s_fuel:"معلومات التزويد",s_user:"معلومات المستخدم",s_pwd:"كلمة المرور",s_pr:"أثمان الوقود (د.م/ل)",s_bu:"الميزانية السنوية لكل قسم (د.م)",s_dec:"قرار الرفض",creq:"الطلب المعتمد",fuelrec:"تسجيل تزويد",nofuel:"لا يوجد طلب معتمد في انتظار التزويد.",cur:"كلمة المرور الحالية",nw:"كلمة المرور الجديدة",cf:"التأكيد",pwhint:"كلمة المرور (اتركها فارغة للإبقاء)",ver:"الإصدار 1.0",reports:"التقارير",usage:"استعمال الحصة",backup:"نسخ احتياطي للبيانات",exp:"تصدير النسخة (JSON)",imp:"استيراد نسخة",imp_ok:"تم استيراد النسخة.",imp_ko:"ملف غير صالح.",a_import:"استيراد نسخة احتياطية",bydept:"حسب القسم",byveh:"حسب المركبة",todo:"طلبات للمعالجة",use:"استخدام",n_late:"الطلب {no} قيد الانتظار منذ {d} أيام",late:"متأخر",dark:"الوضع الداكن",light:"الوضع الفاتح",hist:"السجل",chartc:"التكلفة الشهرية (د.م)",tl:"إجمالي اللترات",tc:"إجمالي التكلفة",lo:"آخر قراءة للعداد",unread:"غير مقروء",flag:"شذوذ",ok2:"مطابق",total:"المجموع"}};
+T.en={app:"Fuel Management",login:"Sign in",ident:"Username",pass:"Password",demo:"Demo accounts",bad:"Incorrect username or password.",off:"This account is disabled.",logout:"Sign out",pwd:"Change password",notifs:"Notifications",denied:"Access denied",g1:"Requests",g2:"Management",g3:"Administration",home:"Home",dashboard:"Dashboard",mine:"My requests",new:"New request",all:"All requests",vehicles:"Vehicles",fuel:"Fuelings",users:"Users",budget:"Budget and settings",log:"Activity log",reqd:"Request",ADMIN:"Administrator",MANAGER:"Manager",EMPLOYEE:"Employee",P:"Pending",A:"Approved",R:"Rejected",date:"Date",veh:"Vehicle",ftype:"Fuel",liters:"Liters",reason:"Reason",no:"Voucher no.",status:"Status",emp:"Employee",month:"Month",rej:"Rejection reason",plate:"Plate",model:"Model",l100:"Normal (L/100 km)",quota:"Monthly quota (L)",price:"Unit price (DH/L)",station:"Station",odo:"Odometer (km)",name:"Full name",role:"Role",dept:"Department",amount:"Amount",act:"Actions",bud:"Annual budget",cons:"Consumed",pct:"Rate",who:"User",what:"Action",save:"Save",cancel:"Cancel",add:"New",view:"View",edit:"Edit",del:"Delete",ok:"Approve",ko:"Reject",print:"Print",search:"Search",req_note:"Fields marked * are required",required:"Required field",all2:"All",prev:"Previous",next:"Next",none:"No results",csv:"Export CSV",reset:"Reset demo data",saved:"Saved successfully.",disable:"Disable",enable:"Enable",kl:"Liters this month",kc:"Cost this month",kp:"Pending requests",ka:"Average consumption (L/100 km)",anom:"Consumption anomalies (15% or more above normal)",over:"Vehicles over monthly quota",chart:"Monthly consumption (liters)",normal:"Normal",meas:"Measured",gap:"Gap",bon:"Fuel voucher",rq_:"Requester",mg:"Manager",dr:"Management",stamp:"Stamp",appr:"Approved by",n_new:"New request {no} from {u}",n_ok:"Request {no} approved",n_ko:"Request {no} rejected",a_login:"Sign in",a_req:"Request created",a_ok:"Request approved",a_ko:"Request rejected",a_fuel:"Fueling recorded",a_veh:"Vehicle updated",a_user:"User updated",a_set:"Settings updated",a_pwd:"Password changed",a_reset:"Data reset",e_num:"A positive number is required",e_plate:"Expected format: 12345-A-6",e_pw6:"At least 6 characters",e_mis:"Passwords do not match",e_cur:"Current password is incorrect",e_dup:"This value already exists",e_odo:"Odometer must exceed the previous reading",e_max:"Maximum 200 liters",s_req:"Request details",s_veh:"Vehicle details",s_fuel:"Fueling details",s_user:"User details",s_pwd:"Password",s_pr:"Fuel prices (DH/L)",s_bu:"Annual budget per department (DH)",s_dec:"Rejection decision",creq:"Approved request",fuelrec:"Record a fueling",nofuel:"No approved request is waiting for fueling.",cur:"Current password",nw:"New password",cf:"Confirmation",pwhint:"Password (leave blank to keep)",ver:"Version 1.0",unread:"Unread",flag:"Anomaly",ok2:"Normal",total:"Total",reports:"Reports",usage:"Quota usage",backup:"Data backup",exp:"Export backup (JSON)",imp:"Import a backup",imp_ok:"Backup imported.",imp_ko:"Invalid file.",a_import:"Backup imported",bydept:"By department",byveh:"By vehicle",todo:"Requests to process",use:"Use",n_late:"Request {no} pending for {d} days",late:"Overdue",dark:"Dark mode",light:"Light mode",hist:"History",chartc:"Monthly cost (DH)",tl:"Total liters",tc:"Total cost",lo:"Last odometer"};const FT={GO50:{fr:"Gasoil 50",ar:"غازوال 50",en:"Gasoil 50"},SP95:{fr:"Sans plomb 95",ar:"بنزين بدون رصاص 95",en:"Unleaded 95"},GOP:{fr:"Gasoil Premium",ar:"غازوال ممتاز",en:"Gasoil Premium"}};
+const DEPTS=["Administration","Logistique","Maintenance","Transport"],STATIONS=["Afriquia","Total","Shell","Petrom","Winxo"];
+const KEY="gc_db";let L=["fr","ar","en"].includes(LS.getItem("gc_l"))?LS.getItem("gc_l"):"fr",TH=LS.getItem("gc_th")||"dark",db,me,flash="",F={};
+const t=(k,p)=>{let s=T[L][k]||T.fr[k]||k;for(const x in p)s=s.replace("{"+x+"}",p[x]);return s};
+const ft=k=>FT[k]?FT[k][L]:k;
+const $=i=>document.getElementById(i),p2=n=>String(n).padStart(2,"0");
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const iso=d=>d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate());
+const TODAY=new Date(),TD=iso(TODAY);
+const num=(n,d=2)=>{let[a,b]=Number(n).toFixed(d).split(".");a=a.replace(/\B(?=(\d{3})+$)/g," ");return b?a+","+b:a};
+const dh=n=>num(n)+" DH",fd=s=>s.split("-").reverse().join("/"),pn=s=>parseFloat(String(s).replace(",","."));
+const PM={EMPLOYEE:["req.mine","req.new"],MANAGER:["req.mine","req.new","dash","req.all","req.decide","veh","fuel","export"],ADMIN:["req.mine","req.new","dash","req.all","req.decide","veh","fuel","export","users","budget","log","reset"]};
+const can=(r,a)=>(PM[r]||[]).includes(a);
+const nid=a=>a.reduce((m,x)=>Math.max(m,x.id),0)+1;
+function nextNo(y){db.seq[y]=(db.seq[y]||0)+1;return"BC-"+y+"-"+String(db.seq[y]).padStart(4,"0")}
+function seed(){
+ const d0=new Date();d0.setDate(d0.getDate()-75);
+ const U=[["admin","Karim El Idrissi","ADMIN","Administration","admin123"],["manager","Salma Benjelloun","MANAGER","Logistique","manager123"],["employee","Youssef Amrani","EMPLOYEE","Transport","employee123"],["h.tazi","Hind Tazi","EMPLOYEE","Maintenance","demo123"],["o.berrada","Omar Berrada","EMPLOYEE","Logistique","demo123"],["n.chraibi","Nadia Chraibi","EMPLOYEE","Administration","demo123"]];
+ const V=[["12345-A-6","Dacia Logan","GO50",6.2,120],["8841-B-12","Renault Kangoo","GO50",7.4,150],["23907-H-1","Peugeot Partner","GO50",7,140],["5518-D-26","Toyota Hilux","GOP",9.5,200],["31276-A-6","Dacia Sandero","SP95",6.8,100],["7702-E-9","Hyundai Tucson","SP95",8.2,110]];
+ db={seq:{},log:[],notifs:[],reqs:[],fuel:[],set:{prices:{GO50:11.82,SP95:13.46,GOP:12.94},budgets:{Administration:9000,Logistique:42000,Maintenance:30000,Transport:55000}},
+  users:U.map((u,i)=>({id:i+1,login:u[0],name:u[1],role:u[2],dept:u[3],pw:u[4],on:1})),
+  vehicles:V.map((v,i)=>({id:i+1,plate:v[0],model:v[1],fuel:v[2],l100:v[3],quota:v[4],odo0:40000+i*13700}))};
+ const R=["Mission Casablanca","Tournée de distribution","Livraison de matériel","Inspection de chantier","Déplacement Rabat","Mission Agadir","Transport de personnel","Maintenance sur site"],odo={};
+ db.vehicles.forEach(v=>odo[v.id]=v.odo0);
+ for(let i=0;i<25;i++){
+  const d=new Date(d0);d.setDate(d.getDate()+i*3);const ds=iso(d),v=db.vehicles[(i*5)%6];
+  let l=Math.round((22+(i*37)%41+((i*7)%10)/10)*10)/10;if(i==4)l=47.3;
+  const s=i>=21?"P":i%5==0?"R":"A",id=i+1;
+  db.reqs.push({id,no:nextNo(ds.slice(0,4)),user:[3,4,5,6][i%4],veh:v.id,date:ds,fuel:v.fuel,liters:l,reason:R[i%8],status:s,rej:s=="R"?(i%2?"Quota mensuel dépassé":"Motif insuffisant"):"",by:s=="P"?0:2});
+  if(s=="A"){const f=(i==7||i==14)?1.3:.95+((i*13)%11)/100;odo[v.id]+=Math.round(l/(v.l100*f)*100);
+   const b=db.set.prices[v.fuel];db.fuel.push({id:db.fuel.length+1,req:id,veh:v.id,date:ds,liters:l,price:i==4?b:Math.round((b+((i*3)%7-3)/100)*100)/100,station:STATIONS[i%5],odo:odo[v.id],by:2})}
+  if(s=="P")db.notifs.push({id:db.notifs.length+1,u:2,k:"n_new",p:{no:db.reqs[i].no,u:U[db.reqs[i].user-1][1]},link:"req/"+id,read:0})}
+ save()}
+const save=()=>LS.setItem(KEY,JSON.stringify(db));
+function load(){try{db=JSON.parse(LS.getItem(KEY))}catch(e){}if(!db)seed();me=db.users.find(u=>u.id==LS.getItem("gc_me")&&u.on)||null;remind()}
+const veh=id=>db.vehicles.find(v=>v.id==id)||{},usr=id=>db.users.find(u=>u.id==id)||{name:"-"};
+const lg=(k,d)=>{db.log.push({id:nid(db.log),u:me.id,k,d:d||"",ts:TD+" "+p2(new Date().getHours())+":"+p2(new Date().getMinutes())});save()};
+function notify(u,k,p,link){db.notifs.push({id:nid(db.notifs),u,k,p,link,read:0})}
+function cons(f){const v=veh(f.veh);const pr=db.fuel.filter(x=>x.veh==f.veh&&x.odo<f.odo).reduce((m,x)=>Math.max(m,x.odo),v.odo0),km=f.odo-pr;return km>0?f.liters/km*100:null}
+const fdept=f=>{const r=db.reqs.find(x=>x.id==f.req);return r?usr(r.user).dept:""};
+const stl=s=>'<span class="st '+s+'">'+t(s)+"</span>";
+const ST={},LV={};
+function list(id,head,rows,mk,top){
+ const s=ST[id]=ST[id]||{q:"",p:1};
+ LV[id]=()=>{const q=s.q.toLowerCase(),data=rows.filter(r=>!q||mk(r).join(" ").replace(/<[^>]+>/g,"").toLowerCase().includes(q)),pages=Math.max(1,Math.ceil(data.length/10));s.p=Math.min(s.p,pages);
+  const sl=data.slice((s.p-1)*10,s.p*10);
+  return"<table><tr>"+head.map(h=>'<th class="'+(h[0]=="#"?"n":"")+'">'+t(h.replace("#",""))+"</th>").join("")+"</tr>"+(sl.length?sl.map(r=>"<tr>"+mk(r).map((c,i)=>'<td class="'+(head[i][0]=="#"?"n":head[i]=="act"?"act":"")+'">'+c+"</td>").join("")+"</tr>").join(""):'<tr><td colspan="'+head.length+'">'+t("none")+"</td></tr>")+"</table>"+
+  '<div class="pg"><span>'+data.length+"</span>"+(s.p>1?'<a href="#" data-a="pg" data-id="'+id+'" data-p="'+(s.p-1)+'">'+t("prev")+"</a>":"")+"<span>"+s.p+" / "+pages+"</span>"+(s.p<pages?'<a href="#" data-a="pg" data-id="'+id+'" data-p="'+(s.p+1)+'">'+t("next")+"</a>":"")+"</div>"};
+ return'<div class="bar"><input data-s="'+id+'" placeholder="'+t("search")+'" value="'+esc(s.q)+'">'+(top||"")+'</div><div id="tb-'+id+'">'+LV[id]()+"</div>"}
+function frm(id,secs,btn,cancel){
+ const s=F[id]||{v:{},e:{}};let h='<form data-f="'+id+'" novalidate><p class="note">'+t("req_note")+"</p>";
+ secs.forEach(([ti,fs])=>{h+="<fieldset><legend>"+t(ti)+"</legend>";fs.forEach(f=>{
+  const v=s.v[f.n]!==undefined?s.v[f.n]:(f.d==null?"":f.d),e=s.e[f.n];let i;
+  if(f.t=="hidden"){h+='<input type="hidden" name="'+f.n+'" value="'+esc(v)+'">';return}
+  if(f.t=="select")i='<select name="'+f.n+'">'+f.o.map(o=>'<option value="'+esc(o[0])+'"'+(o[0]==v?" selected":"")+">"+esc(o[1])+"</option>").join("")+"</select>";
+  else if(f.t=="textarea")i='<textarea name="'+f.n+'" rows="3">'+esc(v)+"</textarea>";
+  else i='<input name="'+f.n+'" type="'+(f.t||"text")+'" value="'+esc(v)+'" autocomplete="off">';
+  h+='<div class="f"><label>'+t(f.l)+(f.r?' <b class="rq">*</b>':"")+"</label>"+i+(e?'<span class="err">'+t(e)+"</span>":"")+"</div>"});h+="</fieldset>"});
+ return h+'<button type="button" class="btn" data-sub="1">'+t(btn||"save")+"</button>"+(cancel?' <a href="#/'+cancel+'">'+t("cancel")+"</a>":"")+"</form>"}
+const H={};
+const den=()=>"<h1>"+t("denied")+"</h1>";
+const ro=()=>(db.reqs.filter(r=>r.status=="A"&&!db.fuel.some(f=>f.req==r.id)));
+const vopts=()=>db.vehicles.map(v=>[v.id,v.plate+" - "+v.model]);
+const fopts=()=>Object.keys(FT).map(k=>[k,ft(k)]);
+const DEMO={admin:"admin123",manager:"manager123",employee:"employee123"};
+function vLogin(){
+ const d=[["admin","ADMIN"],["manager","MANAGER"],["employee","EMPLOYEE"]];
+ return'<div class="top"><span class="logo">SNIP</span><div class="org"><b>'+ORG[L]+"</b><span>"+t("app")+'</span></div></div><div class="lgt">'+lang()+'</div><div class="lgn"><h1>'+t("login")+"</h1>"+frm("login",[["login",[{n:"ident",l:"ident",r:1},{n:"pass",l:"pass",t:"password",r:1}]]],"login")+"<h2>"+t("demo")+"</h2><table><tr><th>"+t("ident")+"</th><th>"+t("role")+"</th><th></th></tr>"+d.map(x=>"<tr><td>"+x[0]+"</td><td>"+t(x[1])+'</td><td class="act"><a href="#" data-a="demo" data-u="'+x[0]+'">'+t("use")+"</a></td></tr>").join("")+"</table></div>"}
+const LN={fr:"Français",ar:"العربية",en:"English"};
+const lang=()=>'<span class="seg">'+["fr","ar","en"].map(x=>'<a href="#" data-a="lang" data-v="'+x+'" class="'+(L==x?"on":"")+'">'+LN[x]+"</a>").join("")+'</span><a href="#" class="tbtn" data-a="theme">'+t(TH=="dark"?"light":"dark")+"</a>";
+H.login=v=>{const u=db.users.find(x=>x.login==v.ident&&x.pw==v.pass);if(!u)return{pass:"bad"};if(!u.on)return{ident:"off"};me=u;LS.setItem("gc_me",u.id);lg("a_login");remind();location.hash=""};
+function reqRows(m){let r=db.reqs.slice().sort((a,b)=>b.id-a.id);return m=="mine"?r.filter(x=>x.user==me.id):r.filter(x=>(!FL.s||x.status==FL.s)&&(!FL.e||x.user==FL.e)&&(!FL.m||x.date.startsWith(FL.m)))}
+const FL={s:"",e:"",m:""};let curReq=[];
+function vReqs(m){
+ const rows=curReq=reqRows(m);let top="";
+ if(m=="all")top='<select data-flt="s"><option value="">'+t("status")+" : "+t("all2")+"</option>"+["P","A","R"].map(s=>'<option value="'+s+'"'+(FL.s==s?" selected":"")+">"+t(s)+"</option>").join("")+'</select><select data-flt="e"><option value="">'+t("emp")+" : "+t("all2")+"</option>"+db.users.filter(u=>u.role=="EMPLOYEE").map(u=>'<option value="'+u.id+'"'+(FL.e==u.id?" selected":"")+">"+esc(u.name)+"</option>").join("")+'</select><input type="month" data-flt="m" value="'+FL.m+'" title="'+t("month")+'">'+(can(me.role,"export")?'<a class="btn sec" href="#" data-a="csv">'+t("csv")+"</a>":"");
+ else top='<a class="btn" href="#/new">'+t("add")+"</a>";
+ return"<h1>"+t(m)+"</h1>"+list("r"+m,["no","date",m=="all"?"emp":"veh","ftype","#liters","status","act"],rows,r=>[r.no,fd(r.date),m=="all"?esc(usr(r.user).name):veh(r.veh).plate,ft(r.fuel),num(r.liters,1),stl(r.status)+(late(r)?' <span class="st R">'+t("late")+"</span>":""),'<a href="#/req/'+r.id+'">'+t("view")+"</a>"+(r.status=="A"?'<a href="#/bon/'+r.id+'">'+t("print")+"</a>":"")+(r.status=="P"&&can(me.role,"req.decide")?'<a href="#" data-a="approve" data-id="'+r.id+'">'+t("ok")+"</a>":"")+(r.status=="P"&&r.user==me.id?'<a href="#" data-a="delreq" data-id="'+r.id+'">'+t("del")+"</a>":"")],top)}
+function vNew(){return"<h1>"+t("new")+"</h1>"+frm("req",[["s_req",[{n:"date",l:"date",t:"date",d:TD,r:1},{n:"veh",l:"veh",t:"select",o:vopts(),r:1},{n:"fuel",l:"ftype",t:"select",o:fopts(),r:1},{n:"liters",l:"liters",r:1},{n:"reason",l:"reason",t:"textarea",r:1}]]],"save","mine")}
+H.req=v=>{const e={},l=pn(v.liters);if(!v.date)e.date="required";if(!(l>0))e.liters="e_num";else if(l>200)e.liters="e_max";if(!v.reason)e.reason="required";if(Object.keys(e).length)return e;
+ const no=nextNo(v.date.slice(0,4)),id=nid(db.reqs);db.reqs.push({id,no,user:me.id,veh:+v.veh,date:v.date,fuel:v.fuel,liters:l,reason:v.reason,status:"P",rej:"",by:0});
+ db.users.filter(u=>u.role!="EMPLOYEE"&&u.on).forEach(u=>notify(u.id,"n_new",{no,u:me.name},"req/"+id));lg("a_req",no);flash="saved";location.hash="#/mine"};
+function vReq(id){
+ const r=db.reqs.find(x=>x.id==id);if(!r||(r.user!=me.id&&!can(me.role,"req.all")))return den();
+ const k=(a,b)=>"<tr><th>"+t(a)+"</th><td>"+b+"</td></tr>";
+ let h="<h1>"+t("reqd")+" "+r.no+'</h1><table class="kv">'+k("date",fd(r.date))+k("emp",esc(usr(r.user).name))+k("veh",veh(r.veh).plate+" - "+esc(veh(r.veh).model))+k("ftype",ft(r.fuel))+k("liters",num(r.liters,1)+" L")+k("reason",esc(r.reason))+k("status",stl(r.status))+(r.status=="R"?k("rej",esc(r.rej)):"")+(r.by?k("appr",esc(usr(r.by).name)):"")+"</table>";
+ if(r.status=="A")h+='<p><a class="btn" href="#/bon/'+r.id+'">'+t("print")+"</a></p>";
+ if(r.status=="P"&&can(me.role,"req.decide"))h+='<p><a class="btn" href="#" data-a="approve" data-id="'+r.id+'">'+t("ok")+"</a></p>"+frm("reject",[["s_dec",[{n:"id",t:"hidden",d:r.id},{n:"rej",l:"rej",t:"textarea",r:1}]]],"ko");
+ return h}
+H.reject=v=>{if(!v.rej)return{rej:"required"};if(!can(me.role,"req.decide"))return;const r=db.reqs.find(x=>x.id==v.id);r.status="R";r.rej=v.rej;r.by=me.id;notify(r.user,"n_ko",{no:r.no},"req/"+r.id);lg("a_ko",r.no);flash="saved";location.hash="#/all"};
+function vBon(id){
+ const r=db.reqs.find(x=>x.id==id);if(!r||r.status!="A"||(r.user!=me.id&&!can(me.role,"req.all")))return den();
+ const k=(a,b)=>"<tr><th>"+t(a)+"</th><td>"+b+"</td></tr>";
+ return'<p class="noprint"><a class="btn" href="#" data-a="print">'+t("print")+'</a></p><div class="bon"><div class="bh"><b>'+ORG.fr+"</b><b>"+ORG.ar+"</b></div><h2>"+t("bon")+" "+t("no")+" "+r.no+'</h2><table class="kv">'+k("date",fd(r.date))+k("veh",veh(r.veh).plate+" - "+esc(veh(r.veh).model))+k("ftype",ft(r.fuel))+k("liters",num(r.liters,1)+" L")+k("reason",esc(r.reason))+k("rq_",esc(usr(r.user).name))+k("appr",esc(usr(r.by).name))+'</table><div class="sig"><div>'+t("rq_")+"</div><div>"+t("mg")+"</div><div>"+t("dr")+'</div></div><div class="stamp">'+t("stamp")+"</div></div>"}
+function vVeh(){return"<h1>"+t("vehicles")+"</h1>"+list("veh",["plate","model","ftype","#l100","#quota","usage","act"],db.vehicles,v=>[v.plate,esc(v.model),ft(v.fuel),num(v.l100,1),num(v.quota,0),usage(v),'<a href="#/vh/'+v.id+'">'+t("hist")+'</a><a href="#/vehicle/'+v.id+'">'+t("edit")+"</a>"+(db.reqs.some(r=>r.veh==v.id)?"":'<a href="#" data-a="delveh" data-id="'+v.id+'">'+t("del")+"</a>")],'<a class="btn" href="#/vehicle/new">'+t("add")+"</a>")}
+function vVehF(a){const x=a=="new"?{}:db.vehicles.find(v=>v.id==a);if(!x)return den();
+ return"<h1>"+t("vehicles")+"</h1>"+frm("veh",[["s_veh",[{n:"id",t:"hidden",d:x.id||""},{n:"plate",l:"plate",d:x.plate,r:1},{n:"model",l:"model",d:x.model,r:1},{n:"fuel",l:"ftype",t:"select",o:fopts(),d:x.fuel,r:1},{n:"l100",l:"l100",d:x.l100==null?"":String(x.l100).replace(".",","),r:1},{n:"quota",l:"quota",d:x.quota,r:1}]]],"save","vehicles")}
+H.veh=v=>{const e={},l=pn(v.l100),q=pn(v.quota);v.plate=v.plate.toUpperCase();
+ if(!/^\d{1,6}-[A-Z\u0600-\u06FF]-\d{1,2}$/.test(v.plate))e.plate="e_plate";else if(db.vehicles.some(x=>x.plate==v.plate&&x.id!=v.id))e.plate="e_dup";
+ if(!v.model)e.model="required";if(!(l>0))e.l100="e_num";if(!(q>0))e.quota="e_num";if(Object.keys(e).length)return e;
+ if(v.id){Object.assign(db.vehicles.find(x=>x.id==v.id),{plate:v.plate,model:v.model,fuel:v.fuel,l100:l,quota:q})}else db.vehicles.push({id:nid(db.vehicles),plate:v.plate,model:v.model,fuel:v.fuel,l100:l,quota:q,odo0:0});
+ lg("a_veh",v.plate);flash="saved";location.hash="#/vehicles"};
+function vFuel(){
+ const o=ro().map(r=>[r.id,r.no+" - "+veh(r.veh).plate+" - "+num(r.liters,1)+" L"]);
+ return"<h1>"+t("fuel")+"</h1>"+(o.length?frm("fuel",[["fuelrec",[{n:"req",l:"creq",t:"select",o,r:1},{n:"liters",l:"liters",r:1},{n:"price",l:"price",r:1},{n:"station",l:"station",t:"select",o:STATIONS.map(s=>[s,s]),r:1},{n:"odo",l:"odo",r:1}]]],"save"):'<p class="note">'+t("nofuel")+"</p>")+"<h2>"+t("fuel")+"</h2>"+
+ list("fuel",["date","veh","station","#liters","#price","#amount","#odo","#normal","#meas","status"],db.fuel.slice().sort((a,b)=>b.id-a.id),f=>{const c=cons(f),v=veh(f.veh),an=c&&c>=v.l100*1.15;return[fd(f.date),v.plate,f.station,num(f.liters,1),num(f.price),dh(f.liters*f.price),num(f.odo,0),num(v.l100,1),c?num(c,1):"-",an?'<span class="st R">'+t("flag")+"</span>":'<span class="st A">'+t("ok2")+"</span>"]},'<a class="btn sec" href="#" data-a="csvfuel">'+t("csv")+"</a>")}
+H.fuel=v=>{const e={},r=db.reqs.find(x=>x.id==v.req),l=pn(v.liters),p=pn(v.price),o=parseInt(v.odo,10);if(!r)e.req="required";if(!(l>0))e.liters="e_num";if(!(p>0))e.price="e_num";
+ if(r){const ve=veh(r.veh),pr=db.fuel.filter(x=>x.veh==r.veh).reduce((m,x)=>Math.max(m,x.odo),ve.odo0);if(!(o>pr))e.odo="e_odo"}if(Object.keys(e).length)return e;
+ db.fuel.push({id:nid(db.fuel),req:r.id,veh:r.veh,date:TD,liters:l,price:p,station:v.station,odo:o,by:me.id});lg("a_fuel",r.no);flash="saved"};
+function vDash(){
+ const ym=TD.slice(0,7),fm=db.fuel.filter(f=>f.date.startsWith(ym)),cs=db.fuel.map(cons).filter(Boolean);
+ const an=db.fuel.filter(f=>{const c=cons(f);return c&&c>=veh(f.veh).l100*1.15}),ov=db.vehicles.map(v=>({v,l:fm.filter(f=>f.veh==v.id).reduce((s,f)=>s+f.liters,0)})).filter(x=>x.l>x.v.quota);
+ const pd=db.reqs.filter(r=>r.status=="P").slice(-5).reverse(),kp=(a,b)=>"<div><span>"+t(a)+"</span><b>"+b+"</b></div>";
+ return"<h1>"+t("dashboard")+'</h1><div class="kp">'+kp("kl",num(fm.reduce((s,f)=>s+f.liters,0),1)+" L")+kp("kc",dh(fm.reduce((s,f)=>s+f.liters*f.price,0)))+kp("kp",db.reqs.filter(r=>r.status=="P").length)+kp("ka",cs.length?num(cs.reduce((a,b)=>a+b,0)/cs.length,1):"-")+"</div><h2>"+t("chart")+"</h2>"+chart()+"<h2>"+t("chartc")+"</h2>"+chart(1)+
+ "<h2>"+t("anom")+"</h2><table><tr><th>"+t("date")+"</th><th>"+t("veh")+'</th><th class="n">'+t("normal")+'</th><th class="n">'+t("meas")+'</th><th class="n">'+t("gap")+"</th></tr>"+(an.length?an.map(f=>{const c=cons(f),n=veh(f.veh).l100;return"<tr><td>"+fd(f.date)+"</td><td>"+veh(f.veh).plate+'</td><td class="n">'+num(n,1)+'</td><td class="n">'+num(c,1)+'</td><td class="n">+'+num((c/n-1)*100,1)+" %</td></tr>"}).join(""):'<tr><td colspan="5">'+t("none")+"</td></tr>")+"</table><h2>"+t("over")+"</h2><table><tr><th>"+t("veh")+'</th><th class="n">'+t("liters")+'</th><th class="n">'+t("quota")+"</th></tr>"+(ov.length?ov.map(x=>"<tr><td>"+x.v.plate+'</td><td class="n">'+num(x.l,1)+'</td><td class="n">'+num(x.v.quota,0)+"</td></tr>").join(""):'<tr><td colspan="3">'+t("none")+"</td></tr>")+"</table><h2>"+t("todo")+"</h2><table><tr><th>"+t("no")+"</th><th>"+t("emp")+"</th><th>"+t("veh")+'</th><th class="n">'+t("liters")+"</th><th>"+t("act")+"</th></tr>"+(pd.length?pd.map(r=>"<tr><td>"+r.no+"</td><td>"+esc(usr(r.user).name)+"</td><td>"+veh(r.veh).plate+'</td><td class="n">'+num(r.liters,1)+'</td><td class="act"><a href="#/req/'+r.id+'">'+t("view")+'</a><a href="#" data-a="approve" data-id="'+r.id+'">'+t("ok")+"</a></td></tr>").join(""):'<tr><td colspan="5">'+t("none")+"</td></tr>")+"</table>"}
+function vUsers(){return"<h1>"+t("users")+"</h1>"+list("usr",["name","ident","role","dept","status","act"],db.users,u=>[esc(u.name),esc(u.login),t(u.role),u.dept,'<span class="st '+(u.on?"A":"g")+'">'+t(u.on?"enable":"disable")+"</span>",'<a href="#/user/'+u.id+'">'+t("edit")+"</a>"+(u.id!=me.id?'<a href="#" data-a="toggle" data-id="'+u.id+'">'+t(u.on?"disable":"enable")+"</a>":"")],'<a class="btn" href="#/user/new">'+t("add")+"</a>")}
+function vUserF(a){const x=a=="new"?{}:db.users.find(u=>u.id==a);if(!x)return den();
+ return"<h1>"+t("users")+"</h1>"+frm("user",[["s_user",[{n:"id",t:"hidden",d:x.id||""},{n:"name",l:"name",d:x.name,r:1},{n:"ident",l:"ident",d:x.login,r:1},{n:"role",l:"role",t:"select",o:["ADMIN","MANAGER","EMPLOYEE"].map(r=>[r,t(r)]),d:x.role||"EMPLOYEE",r:1},{n:"dept",l:"dept",t:"select",o:DEPTS.map(d=>[d,d]),d:x.dept,r:1},{n:"pw",l:x.id?"pwhint":"pass",t:"password",r:!x.id}]]],"save","users")}
+H.user=v=>{const e={};if(!v.name)e.name="required";if(!v.ident)e.ident="required";else if(db.users.some(u=>u.login==v.ident&&u.id!=v.id))e.ident="e_dup";if(!v.id&&!v.pw)e.pw="required";else if(v.pw&&v.pw.length<6)e.pw="e_pw6";if(Object.keys(e).length)return e;
+ if(v.id){const u=db.users.find(x=>x.id==v.id);Object.assign(u,{name:v.name,login:v.ident,role:v.role,dept:v.dept});if(v.pw)u.pw=v.pw;if(u.id==me.id)me=u}else db.users.push({id:nid(db.users),login:v.ident,name:v.name,role:v.role,dept:v.dept,pw:v.pw,on:1});
+ lg("a_user",v.ident);flash="saved";location.hash="#/users"};
+function vBud(){
+ const yr=TD.slice(0,4),b=db.set.budgets;let tb=0,tc=0;
+ const rows=DEPTS.map(d=>{const c=db.fuel.filter(f=>f.date.startsWith(yr)&&fdept(f)==d).reduce((s,f)=>s+f.liters*f.price,0);tb+=b[d];tc+=c;return"<tr><td>"+d+'</td><td class="n">'+dh(b[d])+'</td><td class="n">'+dh(c)+'</td><td class="n">'+num(c/b[d]*100,1)+' %</td><td><div class="bd"><i style="width:'+Math.min(100,c/b[d]*100)+'%"></i></div></td></tr>'}).join("");
+ return"<h1>"+t("budget")+"</h1><table><tr><th>"+t("dept")+'</th><th class="n">'+t("bud")+'</th><th class="n">'+t("cons")+'</th><th class="n">'+t("pct")+"</th><th></th></tr>"+rows+'<tr><td><b>'+t("total")+'</b></td><td class="n"><b>'+dh(tb)+'</b></td><td class="n"><b>'+dh(tc)+'</b></td><td class="n"><b>'+num(tc/tb*100,1)+" %</b></td><td></td></tr></table><br>"+
+ frm("set",[["s_pr",Object.keys(FT).map(k=>({n:"p_"+k,l:ft(k),d:String(db.set.prices[k]).replace(".",","),r:1}))],["s_bu",DEPTS.map(d=>({n:"b_"+d,l:d,d:b[d],r:1}))]],"save")+'<p><a class="btn sec" href="#" data-a="reset">'+t("reset")+"</a></p><h2>"+t("backup")+'</h2><p><a class="btn sec" href="#" data-a="bkp">'+t("exp")+'</a></p><div class="f"><label>'+t("imp")+'</label><input type="file" id="imp" accept=".json"></div>'}
+H.set=v=>{const e={};for(const k in v){const x=pn(v[k]);if(!(x>0))e[k]="e_num"}if(Object.keys(e).length)return e;for(const k in FT)db.set.prices[k]=pn(v["p_"+k]);DEPTS.forEach(d=>db.set.budgets[d]=pn(v["b_"+d]));lg("a_set");flash="saved"};
+function vLog(){return"<h1>"+t("log")+"</h1>"+list("log",["date","who","what"],db.log.slice().reverse(),l=>[fd(l.ts.slice(0,10))+" "+l.ts.slice(11),esc(usr(l.u).name),t(l.k)+(l.d?" : "+esc(l.d):"")])}
+function vNot(){const l=db.notifs.filter(n=>n.u==me.id).sort((a,b)=>b.id-a.id);
+ const h="<h1>"+t("notifs")+"</h1><table><tr><th>"+t("what")+"</th><th>"+t("status")+"</th></tr>"+(l.length?l.map(n=>"<tr><td><a href=\"#/"+n.link+'">'+esc(t(n.k,n.p))+"</a></td><td>"+(n.read?"":'<span class="st P">'+t("unread")+"</span>")+"</td></tr>").join(""):'<tr><td colspan="2">'+t("none")+"</td></tr>")+"</table>";
+ l.forEach(n=>n.read=1);save();return h}
+function vPwd(){return"<h1>"+t("pwd")+"</h1>"+frm("pwd",[["s_pwd",[{n:"cur",l:"cur",t:"password",r:1},{n:"nw",l:"nw",t:"password",r:1},{n:"cf",l:"cf",t:"password",r:1}]]])}
+H.pwd=v=>{const e={};if(v.cur!=me.pw)e.cur="e_cur";if(!v.nw||v.nw.length<6)e.nw="e_pw6";else if(v.nw!=v.cf)e.cf="e_mis";if(Object.keys(e).length)return e;me.pw=v.nw;lg("a_pwd");flash="saved"};
+const IC={dashboard:"M4 20V10M10 20V4M16 20v-8M22 20H2",mine:"M4 6h16M4 12h16M4 18h16",new:"M12 5v14M5 12h14",all:"M6 3h9l3 3v15H6zM9 10h6M9 14h6",vehicles:"M3 13l2-6h14l2 6v5H3zM7 18v2M17 18v2",fuel:"M5 21V4h9v17M5 11h9M14 8l4 2v8",users:"M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c0-4 3-6 6-6s6 2 6 6",budget:"M3 6h18v12H3zM3 10h18",reports:"M4 19h16M7 16V9M12 16V5M17 16v-4",log:"M12 7v5l3 3M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"};
+const NAV=[["g1",["dashboard","mine","new","all"]],["g2",["vehicles","fuel","reports"]],["g3",["users","budget","log"]]];
+const R={dashboard:["dash",vDash,"dashboard"],mine:["req.mine",()=>vReqs("mine"),"mine"],new:["req.new",vNew,"new"],all:["req.all",()=>vReqs("all"),"all"],req:["req.mine",vReq,"all","reqd"],bon:["req.mine",vBon,"all","bon"],vehicles:["veh",vVeh,"vehicles"],vh:["veh",vHist,"vehicles","hist"],vehicle:["veh",vVehF,"vehicles"],fuel:["fuel",vFuel,"fuel"],users:["users",vUsers,"users"],user:["users",vUserF,"users"],budget:["budget",vBud,"budget"],reports:["export",vRep,"reports"],log:["log",vLog,"log"],notifs:["",vNot,"notifs"],pwd:["",vPwd,"pwd"]};
+function render(){
+ const h=document.documentElement;h.lang=L;h.dataset.theme=TH;h.dir=L=="ar"?"rtl":"ltr";
+ if(!me){$("app").innerHTML=vLogin();return}
+ let[n,arg]=location.hash.slice(2).split("/");if(!R[n])n=can(me.role,"dash")?"dashboard":"mine";
+ const r=R[n],ok=!r[0]||can(me.role,r[0]);
+ let body=ok?r[1](arg):den();if(flash&&ok){body='<div class="flash">'+t(flash)+"</div>"+body}
+ const pc=db.reqs.filter(r=>r.status=="P").length,un=db.notifs.filter(x=>x.u==me.id&&!x.read).length;
+ const nav=NAV.map(([g,it])=>{const v=it.filter(i=>can(me.role,R[i][0]));return v.length?"<h4>"+t(g)+"</h4>"+v.map(i=>'<a href="#/'+i+'" class="'+(R[n][2]==i?"on":"")+'"><svg viewBox="0 0 24 24"><path d="'+IC[i]+'"/></svg>'+t(i)+(i=="all"&&pc?' <span class="cnt">'+pc+"</span>":"")+"</a>").join(""):""}).join("");
+ $("app").innerHTML='<div class="top"><span class="logo">SNIP</span><div class="org"><b>'+ORG[L]+"</b><span>"+t("app")+'</span></div><div class="ui"><a href="#/notifs" class="nt">'+t("notifs")+' <span class="cnt">'+un+'</span></a><div class="um"><a href="#" data-a="menu" class="ub"><span class="av">'+esc(me.name.split(" ").map(x=>x[0]).slice(0,2).join("").toUpperCase())+'</span><span class="un"><b>'+esc(me.name)+"</b><i>"+t(me.role)+'</i></span></a><div class="dd"><a href="#/pwd">'+t("pwd")+'</a><a href="#" data-a="logout">'+t("logout")+'</a></div></div></div></div><div class="bc"><span>'+t("home")+" &rsaquo; "+t(r[3]||r[2])+'</span><span class="tools">'+lang()+'</span>'+'</div><div class="wrap"><nav>'+nav+"</nav><main>"+body+'</main></div><div class="ft"><span>'+t("ver")+"</span><span>&copy; "+TODAY.getFullYear()+" "+ORG[L]+"</span></div>"}
+const monthL=v=>db.fuel.filter(f=>f.veh==v.id&&f.date.startsWith(TD.slice(0,7))).reduce((s,f)=>s+f.liters,0);
+const usage=v=>{const p=monthL(v)/v.quota*100;return'<div class="bd"><i style="width:'+Math.min(100,p)+'%;background:'+(p>100?"#b42318":p>80?"#a96a0b":"var(--pri)")+'"></i></div> '+num(p,0)+" %"};
+const dl=(n,rows)=>{const q=s=>'"'+String(s).replace(/"/g,'""')+'"',a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+rows.map(r=>r.map(q).join(";")).join("\n")],{type:"text/csv"}));a.download=n;a.click()};
+let REP=[];
+function vRep(){
+ const m=FL.rm||TD.slice(0,7),fs=db.fuel.filter(f=>f.date.startsWith(m)),sm=(a,k)=>a.reduce((s,f)=>s+k(f),0);
+ const rv=db.vehicles.map(v=>{const x=fs.filter(f=>f.veh==v.id),c=x.map(cons).filter(Boolean);return[v.plate,sm(x,f=>f.liters),sm(x,f=>f.liters*f.price),c.length?c.reduce((a,b)=>a+b,0)/c.length:0,sm(x,f=>f.liters)/v.quota*100]});
+ const rd=DEPTS.map(d=>{const x=fs.filter(f=>fdept(f)==d);return[d,sm(x,f=>f.liters),sm(x,f=>f.liters*f.price)]});
+ REP=[[t("veh"),t("liters"),t("amount"),t("meas"),t("usage")]].concat(rv.map(r=>[r[0],num(r[1],1),num(r[2]),r[3]?num(r[3],1):"-",num(r[4],1)+" %"]));
+ const tb=(h,rows)=>"<table><tr>"+h.map((x,i)=>'<th class="'+(i?"n":"")+'">'+x+"</th>").join("")+"</tr>"+rows.map(r=>"<tr>"+r.map((c,i)=>'<td class="'+(i?"n":"")+'">'+c+"</td>").join("")+"</tr>").join("")+"</table>";
+ return"<h1>"+t("reports")+'</h1><div class="bar"><input type="month" data-flt="rm" value="'+m+'"><a class="btn sec" href="#" data-a="csvrep">'+t("csv")+"</a></div><h2>"+t("byveh")+"</h2>"+tb(REP[0],REP.slice(1))+"<h2>"+t("bydept")+"</h2>"+tb([t("dept"),t("liters"),t("amount")],rd.map(r=>[r[0],num(r[1],1),dh(r[2])]))}
+const late=r=>r.status=="P"&&(new Date(TD)-new Date(r.date))/864e5>=3;
+function remind(){let ch=0;db.reqs.filter(r=>late(r)&&!r.rem).forEach(r=>{r.rem=ch=1;const d=Math.floor((new Date(TD)-new Date(r.date))/864e5);db.users.filter(u=>u.role!="EMPLOYEE"&&u.on).forEach(u=>notify(u.id,"n_late",{no:r.no,d},"req/"+r.id))});if(ch)save()}
+function bars(ls,vs){const n=vs.length,mx=Math.max(...vs,1),g=440/n,w=Math.min(60,g*.6);let s='<svg viewBox="0 0 480 220" width="100%" style="max-width:520px;direction:ltr;background:#fff;border:1px solid #cfd6df" role="img"><line x1="20" y1="180" x2="470" y2="180" stroke="#cfd6df"/>';
+ vs.forEach((v,i)=>{const h=Math.round(v/mx*140),x=30+i*g+(g-w)/2,c=x+w/2;s+='<rect x="'+x+'" y="'+(180-h)+'" width="'+w+'" height="'+h+'" fill="#2557d6" rx="3"/><text x="'+c+'" y="'+(172-h)+'" text-anchor="middle" font-size="11" fill="#1d2733">'+num(v,v>999?0:1)+'</text><text x="'+c+'" y="198" text-anchor="middle" font-size="11" fill="#6b7785">'+ls[i]+"</text>"});return s+"</svg>"}
+function chart(k){const ms=[];for(let i=5;i>=0;i--){const d=new Date(TODAY.getFullYear(),TODAY.getMonth()-i,1);ms.push(d.getFullYear()+"-"+p2(d.getMonth()+1))}
+ return bars(ms.map(m=>m.slice(5)+"/"+m.slice(0,4)),ms.map(m=>db.fuel.filter(f=>f.date.startsWith(m)).reduce((s,f)=>s+(k?f.liters*f.price:f.liters),0)))}
+function vHist(id){const v=db.vehicles.find(x=>x.id==id);if(!v)return den();delete ST.vh;
+ const fs=db.fuel.filter(f=>f.veh==v.id).sort((a,b)=>a.odo-b.odo),cs=fs.map(cons),ok=cs.filter(Boolean),kp=(a,b)=>"<div><span>"+t(a)+"</span><b>"+b+"</b></div>";
+ return"<h1>"+t("hist")+" - "+v.plate+" - "+esc(v.model)+'</h1><div class="kp">'+kp("tl",num(fs.reduce((s,f)=>s+f.liters,0),1)+" L")+kp("tc",dh(fs.reduce((s,f)=>s+f.liters*f.price,0)))+kp("ka",ok.length?num(ok.reduce((a,b)=>a+b,0)/ok.length,1):"-")+kp("lo",num(fs.length?fs[fs.length-1].odo:v.odo0,0)+" km")+"</div><h2>"+t("meas")+" (L/100 km) - "+t("normal")+" "+num(v.l100,1)+"</h2>"+bars(fs.slice(-8).map(f=>f.date.slice(8)+"/"+f.date.slice(5,7)),cs.slice(-8).map(c=>c||0))+"<h2>"+t("fuel")+"</h2>"+list("vh",["date","station","#liters","#price","#amount","#odo","#meas","status"],fs.slice().reverse(),f=>{const c=cons(f),an=c&&c>=v.l100*1.15;return[fd(f.date),f.station,num(f.liters,1),num(f.price),dh(f.liters*f.price),num(f.odo,0),c?num(c,1):"-",an?'<span class="st R">'+t("flag")+"</span>":'<span class="st A">'+t("ok2")+"</span>"]})+'<p><a href="#/vehicles">'+t("vehicles")+"</a></p>"}
+const AC={
+ lang:d=>{L=d.v;LS.setItem("gc_l",L);render()},
+ logout:()=>{me=null;LS.removeItem("gc_me");location.hash="";render()},
+ pg:d=>{ST[d.id].p=+d.p;$("tb-"+d.id).innerHTML=LV[d.id]()},
+ print:()=>window.print(),
+ approve:d=>{if(!can(me.role,"req.decide"))return;const r=db.reqs.find(x=>x.id==d.id);r.status="A";r.by=me.id;notify(r.user,"n_ok",{no:r.no},"req/"+r.id);lg("a_ok",r.no);flash="saved";location.hash="#/all";render()},
+ toggle:d=>{const u=db.users.find(x=>x.id==d.id);u.on=u.on?0:1;lg("a_user",u.login);render()},
+ delreq:d=>{const r=db.reqs.find(x=>x.id==d.id);if(!r||r.status!="P"||r.user!=me.id)return;db.reqs=db.reqs.filter(x=>x.id!=r.id);db.notifs=db.notifs.filter(n=>n.link!="req/"+r.id);save();render()},
+ menu:()=>{document.querySelector(".um").classList.toggle("open")},
+ demo:d=>{const f=document.querySelector("form[data-f=login]");f.querySelector("[name=ident]").value=d.u;f.querySelector("[name=pass]").value=DEMO[d.u]},
+ theme:()=>{TH=TH=="dark"?"light":"dark";LS.setItem("gc_th",TH);render()},
+ csvrep:()=>dl("rapport-"+(FL.rm||TD.slice(0,7))+".csv",REP),
+ csvfuel:()=>dl("alimentations.csv",[[t("date"),t("plate"),t("station"),t("liters"),t("price"),t("amount"),t("odo")]].concat(db.fuel.map(f=>[fd(f.date),veh(f.veh).plate,f.station,num(f.liters,1),num(f.price),num(f.liters*f.price),f.odo]))),
+ bkp:()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(db)],{type:"application/json"}));a.download="sauvegarde-carburants.json";a.click()},
+ delveh:d=>{db.vehicles=db.vehicles.filter(v=>v.id!=d.id);save();render()},
+ reset:()=>{if(!can(me.role,"reset"))return;LS.removeItem(KEY);seed();me=db.users[0];remind();lg("a_reset");location.hash="#/budget";render()},
+ csv:()=>{const q=s=>'"'+String(s).replace(/"/g,'""')+'"',rows=[[t("no"),t("date"),t("emp"),t("plate"),t("ftype"),t("liters"),t("status"),t("reason")]].concat(curReq.map(r=>[r.no,fd(r.date),usr(r.user).name,veh(r.veh).plate,ft(r.fuel),num(r.liters,1),t(r.status),r.reason])),a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["\ufeff"+rows.map(r=>r.map(q).join(";")).join("\n")],{type:"text/csv"}));a.download="demandes.csv";a.click()}};
+document.addEventListener("click",e=>{flash="";if(!e.target.closest("[data-a=menu]"))document.querySelectorAll(".um.open").forEach(x=>x.classList.remove("open"));const sb=e.target.closest("[data-sub]");if(sb){e.preventDefault();doSubmit(sb.closest("form"));return}const ln=e.target.closest('a[href^="#/"]');if(ln){e.preventDefault();location.hash=ln.getAttribute("href");return}const a=e.target.closest("[data-a]");if(!a)return;e.preventDefault();AC[a.dataset.a]&&AC[a.dataset.a](a.dataset)});
+document.addEventListener("input",e=>{const i=e.target.dataset.s;if(!i)return;ST[i].q=e.target.value;ST[i].p=1;$("tb-"+i).innerHTML=LV[i]()});
+document.addEventListener("change",e=>{if(e.target.id=="imp"&&can(me.role,"reset")){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.users||!d.reqs||!d.vehicles||!d.fuel||!d.set)throw 0;db=d;me=db.users.find(u=>u.id==me.id&&u.on)||db.users[0];save();lg("a_import");flash="imp_ok"}catch(x){flash="imp_ko"}render()};r.readAsText(e.target.files[0]);return}
+ flash="";const k=e.target.dataset.flt;if(!k)return;FL[k]=e.target.value;if(ST.rall)ST.rall.p=1;render()});
+function doSubmit(form){const f=form&&form.dataset.f;if(!f)return;flash="";const v={};new FormData(form).forEach((x,k)=>v[k]=String(x).trim());const er=H[f](v);if(er&&Object.keys(er).length){F[f]={v,e:er}}else{F={};save()}render()}
+document.addEventListener("submit",e=>{e.preventDefault();doSubmit(e.target)});
+document.addEventListener("keydown",e=>{if(e.key=="Enter"&&e.target.tagName=="INPUT"&&e.target.form&&e.target.form.dataset.f){e.preventDefault();doSubmit(e.target.form)}});
+window.addEventListener("hashchange",()=>{F={};render()});
+load();render();
+</script>
+</body>
+</html>
