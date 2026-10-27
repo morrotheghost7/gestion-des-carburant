@@ -9,7 +9,7 @@ Ceci est un projet scolaire. Il a été réalisé à des fins pédagogiques sous
 
 L'entreprise (Société Nationale des Infrastructures Publiques), les utilisateurs, les véhicules et toutes les données sont fictifs.
 
-Réalisé par : Oualid dahmani
+Réalisé par : oualid dahmani
 
 FONCTIONNALITÉS
 ---------------
@@ -26,6 +26,10 @@ Les employés demandent du carburant pour un véhicule. Les responsables approuv
 - Trois rôles : Administrateur, Responsable, Employé, avec contrôle des droits sur chaque page
 - Langues : français, arabe (de droite à gauche) et anglais
 - Thèmes sombre et clair
+- Bon de carburant avec QR code : l'employé le scanne et saisit son alimentation, puis le responsable la valide
+- Scanner de QR code intégré (caméra ou import d'une image)
+- Connexion rapide par carte QR personnelle, protégée par un code PIN à 4 chiffres (3 essais), carte révocable par l'administrateur
+- Cartes imprimables et téléchargeables en image PNG (recto et verso)
 
 Contexte marocain : montants en DH (1 250,50 DH), dates au format jj/mm/aaaa, carburants Gasoil 50, Sans plomb 95 et Gasoil Premium, stations Afriquia, Total, Shell, Petrom et Winxo, immatriculations du type 12345-A-6.
 
@@ -35,11 +39,13 @@ COMPTES DE DÉMONSTRATION
 - manager / manager123 (Responsable)
 - employee / employee123 (Employé)
 
+Codes PIN de démonstration pour la connexion par carte : 1111 (admin), 2222 (manager), 3333 (employee).
+
 REMARQUES TECHNIQUES
 --------------------
 - HTML, CSS et JavaScript purs, sans framework ni bibliothèque. Toute l'application tient dans le fichier index.html.
 - Les données sont enregistrées dans le navigateur (localStorage). Le bouton Réinitialiser les données de démonstration (administrateur) rétablit les données de départ.
-- Les mots de passe sont conservés en clair dans le navigateur car il s'agit d'une démonstration. Une vraie application utiliserait un serveur et des mots de passe chiffrés.
+- Les mots de passe et les codes PIN sont conservés en clair dans le navigateur car il s'agit d'une démonstration. Une vraie application utiliserait un serveur et des mots de passe chiffrés.
 
 PROFESSEUR
 ----------
